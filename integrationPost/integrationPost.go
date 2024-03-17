@@ -1,11 +1,8 @@
 package integrationPost
 
 import (
-	"bytes"
 	"encoding/json"
-	"io/ioutil"
-	"log"
-	"net/http"
+	"github.com/jeff-rdg/idea_pattern/httpRequest"
 	"reflect"
 )
 
@@ -23,18 +20,5 @@ func Execute(request Requestier) ([]byte, error) {
 
 	payload, _ := json.Marshal(request)
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	return body, nil
-
+	return httpRequest.New(url, httpRequest.POST).SetContentType(httpRequest.JSON).SetBody(payload).Send()
 }
